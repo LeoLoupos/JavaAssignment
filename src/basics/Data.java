@@ -1,0 +1,35 @@
+package basics;
+
+/**
+ * Created by user on 5/2/2016.
+ */
+public class Data {
+
+    public int id;
+    public String arrival;
+    public String depart;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getArrival() {
+        return arrival;
+    }
+
+    public void setArrival(String arrival) {
+        this.arrival = arrival;
+    }
+
+    public String getDepart() {
+        return depart;
+    }
+
+    public void setDepart(String depart) {
+        this.depart = depart;
+    }
+}
