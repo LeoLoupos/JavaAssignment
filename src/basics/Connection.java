@@ -18,7 +18,7 @@ public class Connection {
                 ", toname='" + toname + '\'' +
                 ", idf='" + idf + '\'' +
                 ", idt='" + idt + '\'' +
-                '}';
+                " value=" + value + '\'';
     }
 
     public boolean isValue() {

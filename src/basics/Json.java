@@ -8,10 +8,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Collector;
 import org.jsoup.select.Elements;
+import storage.Database;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -84,7 +86,7 @@ public class Json {
     }
 
     // Update All Locations
-    public static void UpdateLoc(ArrayList<Location> arr){
+    public static void UpdateLoc(ArrayList<Location> arr) throws IOException{
         int var = 0;
         long time = System.currentTimeMillis();
         long ending =0;
@@ -98,6 +100,9 @@ public class Json {
 
                 JSONObject person = stations.getJSONObject(0);
                 es.setId(person.getInt("id"));
+                JSONObject p = person.getJSONObject("coordinate");
+                es.setX(p.getBigDecimal("x").toString());
+                es.setY(p.getBigDecimal("y").toString());
                 var++;
                 System.out.println(person.getInt("id") + " " + es.getName() + " " + ending + "__" + var);
 
@@ -130,16 +135,19 @@ public class Json {
 
 
     //Double Check
-    public static void DoubleCheck(ArrayList<Location> arr){
+    public static void DoubleCheck(ArrayList<Location> arr) throws IOException{
         int ch = 0;
         for(Location cc : arr){
-            if(cc.getId()==0){
+            if(cc.getId()==0 || cc.getX().equals("") ||  cc.getY().equals("")){
                 try {
 
                     JSONObject json = readJsonFromUrl("http://transport.opendata.ch/v1/locations?query=" + cc.getName().toString());
                     JSONArray stations = json.getJSONArray("stations");
                     JSONObject person = stations.getJSONObject(0);
                     cc.setId(person.getInt("id"));
+                    JSONObject p = person.getJSONObject("coordinate");
+                    cc.setX(p.getBigDecimal("x").toString());
+                    cc.setY(p.getBigDecimal("y").toString());
                     ch++;
                     System.out.println(person.getInt("id") + " " + cc.getName());
                 }catch (Exception c) {
@@ -153,16 +161,21 @@ public class Json {
 
 
     //Update All Connections.
-    public static ArrayList<Connection> UpdateCon(ArrayList<Location> arr,ArrayList<Connection> arrCon){
+    public static ArrayList<Connection> UpdateCon(ArrayList<Location> arr,ArrayList<Connection> arrCon) throws IOException{
         long end =0;
         int counter = 0;
         long timer = System.currentTimeMillis();
         int auto = 0;
+        int var = 0;
 
         for(int x=0;x<arr.size();x++) {
+            var++;
+
             for (int y = 0; y<arr.size(); y++) {
-                if (x == y) {
+                if (x == y ) {
+
                     continue;
+
                 }
                 Connection cc = new Connection();
 
@@ -199,6 +212,8 @@ public class Json {
 
                         counter++;
                         end = System.currentTimeMillis() - timer;
+
+                        Database.storeCon(cc);
                         arrCon.add(cc);
                     }
 
@@ -252,7 +267,9 @@ public class Json {
         return newarr;
     }
 
-    public static ArrayList<Data> getData(ArrayList<Connection> arrCon) throws IOException {
+
+    public static ArrayList<Data> getData(ArrayList<Connection> arrCon) throws IOException,SQLException {
+        int realid = 0;
         ArrayList<Data> newarr= new ArrayList<>();
         for(Connection cc : arrCon){
 
@@ -263,13 +280,17 @@ public class Json {
                 JSONObject test = station.getJSONObject(i);
                 JSONObject sec = test.getJSONObject("from");
                 JSONObject fi = test.getJSONObject("to");
-
                 String depa = sec.getString("departure");
                 String arriv = fi.getString("arrival");
-                dt.setDepart(depa);
-                dt.setArrival(arriv);
-                dt.setId(cc.getId());
+                    dt.setDepart(depa);
+                    dt.setArrival(arriv);
+                    dt.setId(cc.getId());
+                    dt.setRealid(realid);
+                    realid++;
+                Database.storeData(dt);
+                System.out.println(dt.getId() + "  Done!!");
                 newarr.add(dt);
+
 
                 }
         }

@@ -5,7 +5,7 @@ package basics;
  */
 public class Data {
 
-    public int id;
+    public int id,realid;
     public String arrival;
     public String depart;
 
@@ -31,5 +31,13 @@ public class Data {
 
     public void setDepart(String depart) {
         this.depart = depart;
+    }
+
+    public int getRealid() {
+        return realid;
+    }
+
+    public void setRealid(int realid) {
+        this.realid = realid;
     }
 }
