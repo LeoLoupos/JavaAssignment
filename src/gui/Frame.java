@@ -1,10 +1,13 @@
 package gui;
 
+import basics.Connection;
 import basics.Location;
 import storage.Database;
 import threads.ArrayListContainer;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,6 +24,7 @@ public class Frame extends JFrame {
             System.out.println("Hello"+nameField);
         }
     }
+    JMenuBar menuBar;
 
     private DefaultListModel localModel;
     JTextField nameField;
@@ -33,7 +37,7 @@ public class Frame extends JFrame {
         mb.add(new Menu("Connection"));
         this.setMenuBar(mb);
 
-        this.setSize(400, 800);
+        this.setSize(800, 800);
         this.setLayout(new FlowLayout());
         Container def = this.getContentPane();
 
@@ -41,9 +45,11 @@ public class Frame extends JFrame {
         nameField.setColumns(40);
         def.add(nameField);
 
-        JButton b = new JButton("OK");
+        JButton b = new JButton("Search");
         def.add(b);
-        JButton b2 = new JButton("Cancel");
+        JButton b1 = new JButton("Search Connections");
+        def.add(b1);
+        JButton b2 = new JButton("Exit");
         def.add(b2);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,6 +62,29 @@ public class Frame extends JFrame {
                             }
         );
 
+        b1.addActionListener(new java.awt.event.ActionListener() {
+                                public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                                    addButton2ActionPerformed(evt);
+
+                                }
+                            }
+        );
+
+    }
+    private void addButton2ActionPerformed(java.awt.event.ActionEvent evt){
+
+        ArrayList<Connection> cons;
+
+        if(!Database.isConnected()){
+            Database.connect("it21332","dit21332");
+        }
+
+        cons  = Database.getAllCons();
+        ConFrame cf = new ConFrame(cons);
+
+        //cf.setList(cons);
+        cf.setVisible(true);
     }
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt,String name) {
@@ -93,17 +122,21 @@ public class Frame extends JFrame {
 
     public void shower(Location l){
         JFrame jf =new JFrame();
-        jf.setSize(100,200);
+        jf.setSize(400,600);
         String[] columnNames = {"Location Name", "ID", " X ", " Y "};
         Object[][] locs ={
                 {l.getName(),l.getId(),l.getX(),l.getY()},
                 {}
         };
-        JTable table = new JTable(locs, columnNames);
+        TableModel model = new DefaultTableModel(locs, columnNames);
+
+        JTable table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
+
         jf.getContentPane().setLayout(new BorderLayout());
         jf.getContentPane().add(table.getTableHeader(), BorderLayout.PAGE_START);
+
         jf.add(table, BorderLayout.CENTER);
         jf.setVisible(true);
     }
