@@ -22,6 +22,7 @@ public class Database {
         connect(user,pass);
     }
 
+    //checker
     public static boolean isConnected() {
         try {
             if (conn != null && !conn.isClosed()) {
@@ -35,6 +36,7 @@ public class Database {
         return false;
     }
 
+    //connect to DB
     public static void connect(String username,String password) {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -50,6 +52,7 @@ public class Database {
         }
     }
 
+    //disc for DB
     public static void disconnect() {
         try {
             if (conn != null && !conn.isClosed()) {
@@ -113,6 +116,7 @@ public class Database {
 
     }
 
+    /*
     public static void storeAllLocs(ArrayList<Location> locs) {
         try {
 
@@ -132,7 +136,8 @@ public class Database {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
+    }*/
+
     public static void writeCitiesToDB(ArrayList<Location> cities) throws DBHasDataException {
         try {
             PreparedStatement pst = conn.prepareStatement("INSERT INTO LOCATION VALUES(?,?,?,?)");
@@ -228,6 +233,29 @@ public class Database {
         }
 
         return all;
+    }
+
+
+    ///method for GUI
+    public static basics.Connection getCon(String namef,String namet){
+        basics.Connection con = new basics.Connection();
+
+        try {
+            Statement st = conn.createStatement();
+            String sql="SELECT * FROM CONNECTION WHERE NAMEFR='"+namef + "' AND NAMETO='"+ namet + "'";
+            ResultSet rs=st.executeQuery(sql);
+            while (rs.next()) {
+                con.setFromname(rs.getString(1));
+                con.setToname(rs.getString(2));
+                con.setIdf(rs.getInt(3));
+                con.setIdt(rs.getInt(4));
+                con.setId(rs.getInt(5));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return con;
+
     }
 
     //ALL METHODS CONNECTIONS

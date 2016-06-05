@@ -25,6 +25,12 @@ public class ArrayListContainer {
             alllocs.add(h);
         }
 
+        public synchronized  int retSize(){
+            return  alllocs.size();
+        }
+
+
+
     }
 
 

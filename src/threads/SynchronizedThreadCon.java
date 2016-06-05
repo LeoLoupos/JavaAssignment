@@ -1,5 +1,6 @@
 package threads;
 
+import basics.Connection;
 import basics.Location;
 import storage.Database;
 
@@ -8,30 +9,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by user on 6/3/2016.
+ * Created by user on 6/5/2016.
  */
-
-class SynchronizedThread implements Runnable {
+public class SynchronizedThreadCon implements Runnable {
     int threadid;
     boolean isDone;
-    public ArrayListContainer threadhuman;
+    public ArrayListContainerCon threadcon;
 
-    public SynchronizedThread(int threadid,ArrayListContainer threadhuman){
+    public SynchronizedThreadCon(int threadid,ArrayListContainerCon threadcon){
 //        this.o=o;
         this.isDone=false;
         this.threadid=threadid;
-        this.threadhuman=threadhuman;
+        this.threadcon=threadcon;
     }
     public void run() {
         if(!Database.isConnected()){
             Database.connect("it21332","dit21332");
         }
-        ArrayList<Location> res = new ArrayList<>();
-        res = Database.readCitiesFromDB();
+        ArrayList<Connection> res = new ArrayList<>();
+        res = Database.getAllCons();
         try {
             for (int i=0;i<res.size();i++){
-                Location test = res.get(i);
-                threadhuman.add(test);
+                Connection test = res.get(i);
+                threadcon.add(test);
                 System.out.println(test.toString());
 
             }
@@ -42,7 +42,6 @@ class SynchronizedThread implements Runnable {
         }
         System.out.println("Wake up");
         this.isDone=true;
-        ///When executors done , start Frame
     }
 
     public boolean isDone(){

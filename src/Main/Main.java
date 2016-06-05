@@ -7,6 +7,8 @@ import basics.Location;
 import gui.Frame;
 import storage.Database;
 import storage.FileUtilities;
+import threads.ArrayListContainer;
+import threads.ThreadPoolLoc;
 
 import javax.swing.*;
 import java.io.File;
@@ -21,14 +23,14 @@ import java.util.Scanner;
 public class Main {
 
     public static ArrayList<Location> arr= new ArrayList<>();
-    public static ArrayList<Connection> arrCon = new ArrayList<>();
-    public static ArrayList<Connection> newCon = new ArrayList<>();
-    public static   ArrayList<Data> arrData = new ArrayList<>();
+    //public static ArrayList<Connection> arrCon = new ArrayList<>();
+    //public static ArrayList<Connection> newCon = new ArrayList<>();
+    //public static   ArrayList<Data> arrData = new ArrayList<>();
 
     public static void main(String[] args) throws IOException , SQLException{
-        boolean value = false;
-        Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine();
+        //boolean value = false;
+        //Scanner sc = new Scanner(System.in);
+        //String s = sc.nextLine();
 
         DefaultListModel<String> model;
         Database.connect("it21332","dit21332");
@@ -40,18 +42,16 @@ public class Main {
             }
             Frame f = new Frame(model);
             f.setVisible(true);
-
-
-        //newCon = Database.getAllCons();
+        //ThreadPoolLoc thr = new ThreadPoolLoc();
+        //try {
+        //    thr.exec();
+       // } catch (InterruptedException e) {
+      //      e.printStackTrace();
+       // }
 
         //value = FileUtilities.checker(s,value);
         //FileUtilities.writeCitiesToFile(s,value,arr);
-
-        //All Paths
-        //arrCon = Json.UpdateCon(arr,arrCon);
-
         //arrData = Json.getData(newCon);
-
         //FileUtilities.writeLoc("Text/cities.txt",false,arr);
         //FileUtilities.writeCitiesCon("Text/directlinks.txt",false,newCon);
 

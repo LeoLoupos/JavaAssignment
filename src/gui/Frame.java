@@ -1,10 +1,13 @@
 package gui;
 
+import basics.Json;
 import basics.Location;
 import storage.Database;
 import threads.ArrayListContainer;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,91 +18,119 @@ import java.util.ArrayList;
  */
 public class Frame extends JFrame {
 
-    private class myActionListener
-    {
-        void sayHello(){
-            System.out.println("Hello"+nameField);
-        }
-    }
-
     private DefaultListModel localModel;
     JTextField nameField;
-    JTextField ageField;
+
 
     public Frame(DefaultListModel dlm) {
         this.localModel = dlm;
-        MenuBar mb = new MenuBar();
-        mb.add(new Menu("Location"));
-        mb.add(new Menu("Connection"));
-        this.setMenuBar(mb);
+        JPanel jp = new JPanel();
 
-        this.setSize(400, 800);
+        JPanel jloc = new JPanel();
+        ConFrame jcon = new ConFrame();
+        //Filegui jfile = new Filegui();
+        JTabbedPane tabby = new JTabbedPane( );
+        tabby.addTab("Location",jloc);
+        tabby.addTab("Connection",jcon);
+        //tabby.addTab("Save File",jfile);
+
+        this.add(tabby);
+        this.setLocation(500,500);
+        this.setSize(1200, 200);
         this.setLayout(new FlowLayout());
-        Container def = this.getContentPane();
 
         nameField = new JTextField("");
         nameField.setColumns(40);
-        def.add(nameField);
-
+        jloc.add(nameField);
         JButton b = new JButton("OK");
-        def.add(b);
+        jloc.add(b);
         JButton b2 = new JButton("Cancel");
-        def.add(b2);
+        jloc.add(b2);
+
+        //Connection frame Button;
+        JButton Conb = new JButton("Cancel");
+        jcon.add(Conb);
+
+
+        this.getContentPane().add(jp);
+
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         b.addActionListener(new java.awt.event.ActionListener() {
                                 public void actionPerformed(java.awt.event.ActionEvent evt) {
 
+                                    try {
                                         addButtonActionPerformed(evt,nameField.getText());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
 
                                 }
                             }
         );
 
+
+        b2.addActionListener(new java.awt.event.ActionListener() {
+                                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                    dispose();
+
+                                }
+                            }
+        );
+
+        Conb.addActionListener(new java.awt.event.ActionListener() {
+                                 public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                     dispose();
+
+                                 }
+                             }
+        );
+
     }
 
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt,String name) {
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt,String name) throws IOException {
         JFrame j = new JFrame();
-
         if(localModel.contains(name)){
             ArrayList<Location> loc ;
-            ArrayListContainer ar = new ArrayListContainer();
-
+            //ArrayListContainer ar = new ArrayListContainer();
             if(!Database.isConnected()){
                 Database.connect("it21332","dit21332");
             }
-
             loc = Database.readCitiesFromDB();
-
-            int i =0;
             for(Location l : loc){
+                System.out.println(l.getName());
                 if(l.getName().equals(name)){
                     shower(l);
-                    i++;
                 }
             }
 
         }else{
-            //Crawl the city
-            JPanel jp = new JPanel();
-            JTextArea jt = new JTextArea("Oops");
-            j.setSize(200,400);
-            j.getContentPane().setLayout(new BorderLayout());
-            j.getContentPane().add(jp,BorderLayout.SOUTH);
-            jp.add(jt);
-            j.setVisible(true);
+            //// Crawl the city
+            Location l = Json.getLoc(name);
+            if(l.getId()==0){
+                //Some Error Cities have id = 0
+                JOptionPane.showMessageDialog(j,
+                        "Your Location is invalid. Try again.",
+                        "Location error",
+                        JOptionPane.ERROR_MESSAGE);
+            }else{
+                shower(l);
+            }
         }
     }
 
     public void shower(Location l){
         JFrame jf =new JFrame();
-        jf.setSize(100,200);
+
+        jf.setLocation(600,500);
+        jf.setSize(400,600);
         String[] columnNames = {"Location Name", "ID", " X ", " Y "};
         Object[][] locs ={
                 {l.getName(),l.getId(),l.getX(),l.getY()},
                 {}
         };
-        JTable table = new JTable(locs, columnNames);
+        TableModel modelt = new DefaultTableModel(locs,columnNames);
+        JTable table = new JTable(modelt);
         JScrollPane scrollPane = new JScrollPane(table);
         table.setFillsViewportHeight(true);
         jf.getContentPane().setLayout(new BorderLayout());

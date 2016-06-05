@@ -85,6 +85,66 @@ public class Json {
         return arr;
     }
 
+
+
+
+
+
+
+    //Single Crawling for gui purposes
+    public static Location getLoc(String name) throws IOException{
+        Location es = new Location();
+
+        try {
+        es.setName(name);
+        JSONObject json = readJsonFromUrl("http://transport.opendata.ch/v1/locations?query=" + es.getName().toString());
+            System.out.println(json.toString());
+        JSONArray stations = json.getJSONArray("stations");
+        JSONObject person = stations.getJSONObject(0);
+            es.setName((person.getString("name")));
+        es.setId(person.getInt("id"));
+        JSONObject p = person.getJSONObject("coordinate");
+        es.setX(p.getBigDecimal("x").toString());
+        es.setY(p.getBigDecimal("y").toString());
+        } catch (Exception c) {
+
+        }
+        return  es;
+
+    }
+
+    public static ArrayList<Data> getData(Connection c) throws IOException{
+        ArrayList<Data> dtar = new ArrayList<>();
+
+        try {
+                JSONObject json = readJsonFromUrl("http://transport.opendata.ch/v1/connections?from=" + c.getIdf() + "&to=" + c.getIdt() + "&direct=1");
+                JSONArray station = json.getJSONArray("connections");
+                for (int i = 0; i < station.length(); i++) {
+                    Data dt = new Data();
+                    JSONObject test = station.getJSONObject(i);
+                    JSONObject sec = test.getJSONObject("from");
+                    JSONObject fi = test.getJSONObject("to");
+                    String depa = sec.getString("departure");
+                    String arriv = fi.getString("arrival");
+                    dt.setDepart(depa);
+                    dt.setArrival(arriv);
+                    dt.setId(c.getId());
+                    dtar.add(dt);
+                }
+            }catch (Exception ec){
+
+            }
+        return dtar;
+
+    }
+
+
+
+
+
+
+
+
     // Update All Locations
     public static void UpdateLoc(ArrayList<Location> arr) throws IOException{
         int var = 0;
