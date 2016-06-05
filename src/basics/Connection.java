@@ -66,6 +66,7 @@ public class Connection implements Comparator<Connection>, Comparable<Connection
     }
 
     @Override
+<<<<<<< HEAD
     public String toString() {
         return  "fromname='" + fromname + '\'' +
                 ", toname='" + toname + '\'' +
@@ -75,6 +76,8 @@ public class Connection implements Comparator<Connection>, Comparable<Connection
     }
 
     @Override
+=======
+>>>>>>> origin/master
     public int compareTo(Connection o) {
         if (this.idf == o.idf) {
             return 0;
@@ -93,4 +96,8 @@ public class Connection implements Comparator<Connection>, Comparable<Connection
         } else {
             return 1;
         }    }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/master

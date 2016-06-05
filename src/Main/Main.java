@@ -4,6 +4,7 @@ import basics.Connection;
 import basics.Data;
 import basics.Json;
 import basics.Location;
+import gui.ConFrame;
 import gui.Frame;
 import storage.Database;
 import storage.FileUtilities;
@@ -36,18 +37,26 @@ public class Main {
         Database.connect("it21332","dit21332");
         arr = Database.readCitiesFromDB();
 
-            model = new DefaultListModel<String>();
+            model = new DefaultListModel<>();
             for(Location p : arr){
                 model.addElement(p.getName());
             }
             Frame f = new Frame(model);
             f.setVisible(true);
+<<<<<<< HEAD
         //ThreadPoolLoc thr = new ThreadPoolLoc();
         //try {
         //    thr.exec();
        // } catch (InterruptedException e) {
       //      e.printStackTrace();
        // }
+=======
+
+
+
+
+        //newCon = Database.getAllCons();
+>>>>>>> origin/master
 
         //value = FileUtilities.checker(s,value);
         //FileUtilities.writeCitiesToFile(s,value,arr);
